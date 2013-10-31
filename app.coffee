@@ -13,13 +13,19 @@ app.all '*', (req, res, next) ->
 app.get "/", (request, response) ->
   response.send "Karma app."
 
-app.get "/top", (request, response) ->
+app.get "/users", (request, response) ->
+  response.send ["@dickeyxxx", "@michaelavila", "@laser"]
+
+app.get "/leaderboard", (request, response) ->
   response.send [
-    { name: 'dickeyxxx', karma: 50 },
-    { name: 'dickeyxxx', karma: 50 },
-    { name: 'dickeyxxx', karma: 50 },
-    { name: 'dickeyxxx', karma: 50 }
+    { name: '@dickeyxxx', karma: 50 },
+    { name: '@dickeyxxx', karma: 50 },
+    { name: '@dickeyxxx', karma: 50 },
+    { name: '@dickeyxxx', karma: 50 }
   ]
+
+app.post "/upvote", (request, response) ->
+  console.log request
 
 port = process.env.PORT or 5000
 app.listen port, ->
