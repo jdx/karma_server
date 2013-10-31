@@ -1,14 +1,9 @@
 express = require("express")
+cors = require("cors")
 app = express()
 app.use express.logger()
-
-app.all '*', (req, res, next) ->
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "X-Requested-With")
-  if req.method == 'OPTIONS'
-    res.send(200)
-  else
-    next()
+app.use cors()
+app.use express.bodyParser()
 
 app.get "/", (request, response) ->
   response.send "Karma app."
@@ -25,7 +20,7 @@ app.get "/leaderboard", (request, response) ->
   ]
 
 app.post "/upvote", (request, response) ->
-  console.log request
+  response.send request.body.user
 
 port = process.env.PORT or 5000
 app.listen port, ->
