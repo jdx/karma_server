@@ -11,9 +11,6 @@ redis = require('redis-url').connect()
 app.get "/", (request, response) ->
   response.send "Karma app."
 
-app.get "/users", (request, response) ->
-  response.send ["@dickeyxxx", "@michaelavila", "@laser"]
-
 app.get "/leaderboard", (request, response) ->
   redis.zrange "karma:leaderboard", 0, -1, "WITHSCORES", (code, leaderboard) ->
     list = []
@@ -22,7 +19,7 @@ app.get "/leaderboard", (request, response) ->
       if counter % 2 == 0
         list.push { name: element }
       else
-        list[list.length - 1]["karma"] = element
+        list[list.length - 1]["karma"] = parseInt(element)
       counter++
     response.send list.reverse()
 
