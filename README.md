@@ -6,10 +6,11 @@ A node.js server that powers [Karma](http://dickeyxxx.github.io/karma_client).
 Setup Instructions
 ------------------
 
-Get the server repo:
+Get the server repo and change to its directory:
 
 ```bash
 git clone git@github.com:dickeyxxx/karma_server
+cd karma_server
 ```
 
 Install dependencies:
@@ -22,7 +23,6 @@ npm install
 Start the server:
 
 ```bash
-cd karma_server
 nodemon app.coffee
 ```
 
