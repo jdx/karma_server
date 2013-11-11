@@ -2,18 +2,17 @@ _ = require('underscore')
 express = require("express")
 cors = require("cors")
 store = require './app/store'
+redis = require './redis'
 app = express()
 app.use express.logger()
 app.use cors()
 app.use express.bodyParser()
 
-redis = require('redis-url').connect()
-
-app.REDIS_LEADERBOARD_KEY = 'karma:leaderboard'
+app.REDIS_NAMESPACE = 'karma'
 
 app.store = ->
   if not app.karmaStore?
-    app.karmaStore = new store.Store app.REDIS_LEADERBOARD_KEY
+    app.karmaStore = new store.Store app.REDIS_NAMESPACE
   app.karmaStore
 
 app.get "/", (request, response) ->

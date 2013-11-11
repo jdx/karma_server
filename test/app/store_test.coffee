@@ -1,11 +1,11 @@
 store = require "#{__dirname}/../../app/store.coffee"
-redis = require('redis-url').connect()
+redis = require('../../redis').connection
 
 describe 'Store', ->
-  before ->
-    @TEST_STORE_KEY = 'test:karma:leaderboard'
-    redis.del @TEST_STORE_KEY
-    @karmaStore = new store.Store @TEST_STORE_KEY
+  before (done) ->
+    @TEST_NAMESPACE = 'test:karma'
+    redis.deleteKeys(@TEST_NAMESPACE, done)
+    @karmaStore = new store.Store @TEST_NAMESPACE
 
   describe '#leaderboard', ->
     it 'can be empty', (done) ->
@@ -15,9 +15,9 @@ describe 'Store', ->
 
     context 'given entries', ->
       before ->
-        redis.zincrby @TEST_STORE_KEY, 1, 'user2'
-        redis.zincrby @TEST_STORE_KEY, 1, 'user1'
-        redis.zincrby @TEST_STORE_KEY, 1, 'user2'
+        redis.zincrby "#{@TEST_NAMESPACE}:leaderboard", 1, 'user2'
+        redis.zincrby "#{@TEST_NAMESPACE}:leaderboard", 1, 'user1'
+        redis.zincrby "#{@TEST_NAMESPACE}:leaderboard", 1, 'user2'
 
       it 'orders the entries', (done) ->
         @karmaStore.leaderboard (entries) ->
@@ -33,7 +33,7 @@ describe 'Store', ->
 
   describe '#karma', ->
     before ->
-      redis.zincrby @TEST_STORE_KEY, 4, 'user3'
+      redis.zincrby "#{@TEST_NAMESPACE}:leaderboard", 4, 'user3'
 
     it 'returns the correct karma', (done) ->
       @karmaStore.karma 'user3', (karma) ->
@@ -42,7 +42,7 @@ describe 'Store', ->
 
   describe '#upvote', ->
     before ->
-      redis.del @TEST_STORE_KEY
+      redis.del "#{@TEST_NAMESPACE}:leaderboard"
 
     it 'increments a users karma by 1', (done) ->
       @karmaStore.upvote 'someuser'

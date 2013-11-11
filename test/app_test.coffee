@@ -1,13 +1,13 @@
-redis = require('redis-url').connect()
+redis = require('../redis').connection
 request = require 'request'
 
 app = require("#{__dirname}/../app.coffee").app
 port = 3333
 
 describe 'app', ->
-  before ->
-    app.REDIS_LEADERBOARD_KEY = 'test:karma:leaderboard'
-    redis.del app.REDIS_LEADERBOARD_KEY
+  before (done) ->
+    app.REDIS_NAMESPACE = 'test:karma'
+    redis.deleteKeys(app.REDIS_NAMESPACE, done)
 
   before (done) ->
     app.listen port, (error) ->
