@@ -40,3 +40,13 @@ grunt server
 
 Go to `http://127.0.0.1:9000/?local=true` to enable connecting to your local
 node instance. Otherwise it will use production.
+
+
+Running the Tests
+-----------------
+
+Once you've completed the setup running the tests is simple:
+
+```bash
+npm test
+```
