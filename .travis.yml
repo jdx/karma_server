@@ -8,3 +8,6 @@ deploy:
   app: c5-karma
   on:
     repo: dickeyxxx/karma_server
+notifications:
+  flowdock:
+    secure: QmNrWo292h3V80vkC54Emc+nsat6oGRECQT+zdqmh4qBL8oYRmjwSm8obHWzd7Vo63f0+we9z8reFF69WMcd+A5lS4pDMnsj7wZChB9Aa8lF0bc8wk+vWPiy33O8luVkmV8LGou2tysV95xnrHDwL2TIJkQQwkj8l87fvpVWDMA=
