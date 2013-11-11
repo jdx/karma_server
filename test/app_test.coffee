@@ -4,8 +4,6 @@ request = require 'request'
 app = require("#{__dirname}/../app.coffee").app
 port = 3333
 
-url = (path) -> "http://127.0.0.1:3333#{path}"
-
 describe 'app', ->
   before ->
     app.REDIS_LEADERBOARD_KEY = 'test:karma:leaderboard'
@@ -26,21 +24,23 @@ describe 'app', ->
 
   describe '/leaderboard', ->
     before ->
-      redis.zincrby app.REDIS_LEADERBOARD_KEY, 1, 'user2'
-      redis.zincrby app.REDIS_LEADERBOARD_KEY, 1, 'user1'
-      redis.zincrby app.REDIS_LEADERBOARD_KEY, 1, 'user2'
+      app.store().upvote 'laser'
+      app.store().upvote 'laser'
+      app.store().upvote 'laser'
+      app.store().upvote 'dickeyxxx'
+      app.store().upvote 'dickeyxxx'
 
     it 'returns the entries ordered', (done) ->
       request.get url('/leaderboard'), (error, response, body) ->
         entries = JSON.parse body
 
         expect(entries[0]).to.eql
-          name: 'user2'
-          karma: 2
+          name: 'laser'
+          karma: 3
 
         expect(entries[1]).to.eql
-          name: 'user1'
-          karma: 1
+          name: 'dickeyxxx'
+          karma: 2
 
         done()
 
@@ -49,12 +49,11 @@ describe 'app', ->
       options =
         url: url '/upvote'
         json:
-          user: 'someuser'
+          user: 'michaelavila'
 
       request.post options, (error, response, body) ->
-        redis.zrange app.REDIS_LEADERBOARD_KEY, 0, -1, "WITHSCORES", (code, leaderboard) ->
-          entries = leaderboard.reverse()
-          for index in [0..entries.length] by 2
-            if entries[index+1] is 'someuser'
-              expect(+entries[index]).to.eq 1
-              done()
+        app.store().karma 'michaelavila', (karma) ->
+          expect(karma).to.eq 1
+          done()
+
+url = (path) -> "http://127.0.0.1:3333#{path}"
