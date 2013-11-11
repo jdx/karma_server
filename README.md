@@ -1,5 +1,6 @@
 Karma Server
 ============
+[![Build Status](https://travis-ci.org/dickeyxxx/karma_server.png)](https://travis-ci.org/dickeyxxx/karma_server)
 
 A node.js server that powers [Karma](http://dickeyxxx.github.io/karma_client).
 
