@@ -22,7 +22,14 @@ class Store
         callback entry['karma']
         break
 
-  upvote: (username) ->
-    redis.zincrby "#{@namespace}:leaderboard", 1, username
+  upvote: (username, comment, callback) ->
+    multi = redis.multi()
+    multi.lpush "#{@namespace}:upvotes", JSON.stringify({ user: username, comment: (comment || '') })
+    multi.zincrby "#{@namespace}:leaderboard", 1, username
+    multi.exec -> callback?()
+
+  upvotes: (callback) ->
+    redis.lrange "#{@namespace}:upvotes", 0, -1, (err, upvotes) ->
+      callback(JSON.parse(upvote) for upvote in upvotes)
 
 exports.Store = Store

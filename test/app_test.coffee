@@ -5,7 +5,7 @@ app = require("#{__dirname}/../app.coffee").app
 port = 3333
 
 describe 'app', ->
-  before (done) ->
+  beforeEach (done) ->
     app.REDIS_NAMESPACE = 'test:karma'
     redis.deleteKeys(app.REDIS_NAMESPACE, done)
 
@@ -23,7 +23,7 @@ describe 'app', ->
         done()
 
   describe '/leaderboard', ->
-    before ->
+    beforeEach ->
       app.store().upvote 'laser'
       app.store().upvote 'laser'
       app.store().upvote 'laser'
@@ -48,12 +48,20 @@ describe 'app', ->
     it 'increments karma of the specified user', (done) ->
       options =
         url: url '/upvote'
-        json:
-          user: 'michaelavila'
+        json: { user: 'michaelavila' }
 
-      request.post options, (error, response, body) ->
+      request.post options, ->
         app.store().karma 'michaelavila', (karma) ->
           expect(karma).to.eq 1
           done()
+
+  describe '/upvotes', ->
+    it 'gets the recent upvotes', (done) ->
+      options =
+        url: url '/upvotes'
+
+      request.get options, (error, response, body) ->
+        expect(body.length).to.eq 2
+        done()
 
 url = (path) -> "http://127.0.0.1:3333#{path}"

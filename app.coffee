@@ -22,8 +22,12 @@ app.get "/leaderboard", (request, response) ->
   app.store().leaderboard (entries) ->
     response.send entries
 
+app.get "/upvotes", (request, response) ->
+  app.store().upvotes (upvotes) ->
+    response.send upvotes
+
 app.post "/upvote", (request, response) ->
-  app.store().upvote request.body.user
+  app.store().upvote request.body.user, request.body.comments
   response.send 200
 
 port = process.env.PORT or 5000
