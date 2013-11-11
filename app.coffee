@@ -1,6 +1,7 @@
 _ = require('underscore')
 express = require("express")
 cors = require("cors")
+store = require './app/store'
 app = express()
 app.use express.logger()
 app.use cors()
@@ -10,21 +11,20 @@ redis = require('redis-url').connect()
 
 app.REDIS_LEADERBOARD_KEY = 'karma:leaderboard'
 
+app.store = ->
+  if not app.karmaStore?
+    app.karmaStore = new store.Store app.REDIS_LEADERBOARD_KEY
+  app.karmaStore
+
 app.get "/", (request, response) ->
   response.send "Karma app."
 
 app.get "/leaderboard", (request, response) ->
-  redis.zrange app.REDIS_LEADERBOARD_KEY, 0, -1, "WITHSCORES", (code, leaderboard) ->
-    list = []
-    entries = leaderboard.reverse()
-    for index in [0..entries.length-1] by 2
-      list.push
-        name: entries[index+1]
-        karma: +entries[index]
-    response.send list
+  app.store().leaderboard (entries) ->
+    response.send entries
 
 app.post "/upvote", (request, response) ->
-  redis.zincrby app.REDIS_LEADERBOARD_KEY, 1, request.body.user
+  app.store().upvote request.body.user
   response.send 200
 
 port = process.env.PORT or 5000
