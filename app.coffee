@@ -14,14 +14,12 @@ app.get "/", (request, response) ->
 app.get "/leaderboard", (request, response) ->
   redis.zrange "karma:leaderboard", 0, -1, "WITHSCORES", (code, leaderboard) ->
     list = []
-    counter = 0
-    _.each leaderboard, (element) ->
-      if counter % 2 == 0
-        list.push { name: element }
-      else
-        list[list.length - 1]["karma"] = parseInt(element)
-      counter++
-    response.send list.reverse()
+    entries = leaderboard.reverse()
+    for index in [0..entries.length-1] by 2
+      list.push
+        name: entries[index+1]
+        karma: +entries[index]
+    response.send list
 
 app.post "/upvote", (request, response) ->
   redis.zincrby "karma:leaderboard", 1, request.body.user
