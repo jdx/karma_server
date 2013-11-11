@@ -1,11 +1,11 @@
-redis = require('redis-url').connect()
+redis = require('../redis').connection
 
 class Store
 
-  constructor: (@key) ->
+  constructor: (@namespace) ->
 
   leaderboard: (callback) ->
-    redis.zrange @key, 0, -1, "WITHSCORES", (code, leaderboard) ->
+    redis.zrange "#{@namespace}:leaderboard", 0, -1, "WITHSCORES", (code, leaderboard) ->
       list = []
       entries = leaderboard.reverse()
       for index in [0..entries.length-1] by 2
@@ -23,6 +23,6 @@ class Store
         break
 
   upvote: (username) ->
-    redis.zincrby @key, 1, username
+    redis.zincrby "#{@namespace}:leaderboard", 1, username
 
 exports.Store = Store
