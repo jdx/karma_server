@@ -34,11 +34,13 @@ describe 'app', ->
       request.get url('/leaderboard'), (error, response, body) ->
         entries = JSON.parse body
 
-        expect(entries[0]['name']).to.eq 'user2'
-        expect(+entries[0]['karma']).to.eq 2
+        expect(entries[0]).to.eql
+          name: 'user2'
+          karma: 2
 
-        expect(entries[1]['name']).to.eq 'user1'
-        expect(+entries[1]['karma']).to.eq 1
+        expect(entries[1]).to.eql
+          name: 'user1'
+          karma: 1
 
         done()
 
