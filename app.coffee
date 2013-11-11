@@ -8,11 +8,13 @@ app.use express.bodyParser()
 
 redis = require('redis-url').connect()
 
+app.REDIS_LEADERBOARD_KEY = 'karma:leaderboard'
+
 app.get "/", (request, response) ->
   response.send "Karma app."
 
 app.get "/leaderboard", (request, response) ->
-  redis.zrange "karma:leaderboard", 0, -1, "WITHSCORES", (code, leaderboard) ->
+  redis.zrange app.REDIS_LEADERBOARD_KEY, 0, -1, "WITHSCORES", (code, leaderboard) ->
     list = []
     entries = leaderboard.reverse()
     for index in [0..entries.length-1] by 2
@@ -22,9 +24,11 @@ app.get "/leaderboard", (request, response) ->
     response.send list
 
 app.post "/upvote", (request, response) ->
-  redis.zincrby "karma:leaderboard", 1, request.body.user
+  redis.zincrby app.REDIS_LEADERBOARD_KEY, 1, request.body.user
   response.send 200
 
 port = process.env.PORT or 5000
 app.listen port, ->
   console.log "Listening on " + port
+
+exports.app = app
