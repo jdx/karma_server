@@ -1,3 +1,10 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
+deploy:
+  provider: heroku
+  api_key:
+    secure: DeZd5rhtMXkRUnqH6/27whWSevUk/+aRZ+2IbUSAGk1pu78Vqx/06AD1OlwzvByLz48voAuJ8lFWWjXHhmk8IoFc1uvtlVCCyviouoMlwW/TzAzwUaVPLi6iwFxpiFvkN5MXWigct87GdwUNhIhud6bseQDoAFfsAa4G0yhxvFM=
+  app: c5-karma
+  on:
+    repo: dickeyxxx/karma_server
