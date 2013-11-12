@@ -41,12 +41,14 @@ describe 'Store', ->
         done()
 
   describe '#upvote', ->
-    before ->
-      redis.del "#{@TEST_NAMESPACE}:leaderboard"
-
     it 'increments a users karma by 1', (done) ->
-      @karmaStore.upvote 'someuser'
+      @karmaStore.upvote 'someuser', null, =>
+        @karmaStore.karma 'someuser', (karma) ->
+          expect(karma).to.eq 1
+          done()
 
-      @karmaStore.karma 'someuser', (karma) ->
-        expect(karma).to.eq 1
-        done()
+    it 'adds a record to the log', (done) ->
+      @karmaStore.upvote 'someuser', 'is awesome', =>
+        @karmaStore.upvotes (upvotes) ->
+          expect(upvotes[0]).to.eql { user: 'someuser', comment: 'is awesome' }
+          done()
