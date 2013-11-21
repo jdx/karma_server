@@ -30,19 +30,34 @@ describe 'app', ->
       app.store().upvote 'dickeyxxx'
       app.store().upvote 'dickeyxxx'
 
-    it 'returns the entries ordered', (done) ->
-      request.get url('/leaderboard'), (error, response, body) ->
-        entries = JSON.parse body
+    describe 'authenticated', ->
+      it 'returns 401 Unauthorized', (done) ->
+        request.get url('/leaderboard'), (error, response) ->
+          expect(response.statusCode).to.eq 401
+          done()
 
-        expect(entries[0]).to.eql
-          name: 'laser'
-          karma: 3
+    describe 'authenticated', ->
+      before (done) ->
+        options =
+          url: url('/login')
+          username: 'dickeyxxx'
+          password: 'passcode'
+        request.post url('/login'), ->
+          done()
 
-        expect(entries[1]).to.eql
-          name: 'dickeyxxx'
-          karma: 2
+      it 'returns the entries ordered', (done) ->
+        request.get url('/leaderboard'), (error, response, body) ->
+          entries = JSON.parse body
 
-        done()
+          expect(entries[0]).to.eql
+            name: 'laser'
+            karma: 3
+
+          expect(entries[1]).to.eql
+            name: 'dickeyxxx'
+            karma: 2
+
+          done()
 
   describe '/upvote', ->
     it 'increments karma of the specified user', (done) ->
