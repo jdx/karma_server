@@ -1,5 +1,6 @@
 store = require "#{__dirname}/../../app/store.coffee"
 redis = require('../../redis').connection
+timekeeper = require('timekeeper')
 
 describe 'Store', ->
   before (done) ->
@@ -41,6 +42,13 @@ describe 'Store', ->
         done()
 
   describe '#upvote', ->
+
+    date = new Date(1330688329321)
+    before ->
+      timekeeper.freeze(date)
+    after ->
+      timekeeper.reset()
+
     it 'increments a users karma by 1', (done) ->
       @karmaStore.upvote 'someuser', null, =>
         @karmaStore.karma 'someuser', (karma) ->
@@ -50,5 +58,5 @@ describe 'Store', ->
     it 'adds a record to the log', (done) ->
       @karmaStore.upvote 'someuser', 'is awesome', =>
         @karmaStore.upvotes (upvotes) ->
-          expect(upvotes[0]).to.eql { user: 'someuser', comment: 'is awesome' }
+          expect(upvotes[0]).to.eql { user: 'someuser', comment: 'is awesome', timestamp: '2012-03-02T11:38:49.321Z' }
           done()

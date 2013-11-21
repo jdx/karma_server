@@ -24,7 +24,7 @@ class Store
 
   upvote: (username, comment, callback) ->
     multi = redis.multi()
-    multi.lpush "#{@namespace}:upvotes", JSON.stringify({ user: username, comment: (comment || '') })
+    multi.lpush "#{@namespace}:upvotes", JSON.stringify({ user: username, comment: (comment || ''), timestamp: new Date() })
     multi.zincrby "#{@namespace}:leaderboard", 1, username
     multi.exec -> callback?()
 
